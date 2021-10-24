@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, 
     QMessageBox
 
 
-class Window(QStackedWidget):
+class Window(QStackedWidget):  # Interface of Main Window
     def setup_ui(self):
         super().__init__()
         self.setGeometry(350, 100, 495, 624)
@@ -16,7 +16,7 @@ class Window(QStackedWidget):
             self.addWidget(elem)
 
 
-class Page(QWidget):
+class Page(QWidget):  # Default interface of pages
     def setup_ui(self, db_cursor, main_window):
         super().__init__()
         uic.loadUi('interfaces/' + self.name_ui_file, self)
@@ -29,7 +29,7 @@ class Page(QWidget):
         self.main_window.change_window.emit(0)
 
 
-class StartPage(Page):
+class StartPage(Page):  # Inteface of start page
     name_ui_file = 'start_page.ui'
 
     def setup_ui(self, db_cursor: sqlite3.Cursor, main_window: Window):
@@ -47,7 +47,7 @@ class StartPage(Page):
         self.exit_button.clicked.connect(lambda: self.main_window.exit.emit())
 
 
-class SelectModePage(Page):
+class SelectModePage(Page):  # Interface of page for select mode
     name_ui_file = 'select_mode_page.ui'
 
     def initUi(self):
@@ -58,7 +58,7 @@ class SelectModePage(Page):
         self.main_window.start_game(extra_mode)
 
 
-class GamePage(Page):
+class GamePage(Page):  # Interface of game
     name_ui_file = 'game_page.ui'
 
     def exit(self):
@@ -71,7 +71,7 @@ class GamePage(Page):
             'You' + ('win' if win else 'lose') + '!'))
 
 
-class RecordsPage(Page):
+class RecordsPage(Page):  # Interface of records page
     name_ui_file = 'records_page.ui'
 
     def initUi(self):
@@ -129,14 +129,14 @@ class RecordsPage(Page):
                     self.delete_items_of_layout(item.layout())
 
 
-class SettingsPage(Page):
+class SettingsPage(Page):  # TODO: Interface of settings page
     name_ui_file = 'settings_page.ui'
 
     def initUi(self):
         pass
 
 
-class HelpPage(Page):
+class HelpPage(Page):  # TODO: Interface of help page
     name_ui_file = 'help_page.ui'
 
     def initUi(self):
