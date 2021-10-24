@@ -16,10 +16,10 @@ class MainWindow(window_interface.Window):
         self.db_connect = sqlite3.connect('app_data.db')
         self.db_cursor = self.db_connect.cursor()
         super().__init__()
-        self.setupUi()
-        self.initUi()
+        self.setup_ui()
+        self.init_ui()
 
-    def initUi(self):
+    def init_ui(self):
         self.change_window[int].connect(self.setCurrentIndex)
         self.exit.connect(self.close)
 
@@ -60,14 +60,14 @@ class Piece(QWidget):
 
 
 class Tetrominoe:
-    NoShape = 0
-    ZShape = 1
-    SShape = 2
-    LineShape = 3
-    TShape = 4
-    SquareShape = 5
-    LShape = 6
-    MirroredLShape = 7
+    no_shape = 0
+    z_shape = 1
+    s_shape = 2
+    line_shape = 3
+    t_shape = 4
+    square_shape = 5
+    l_shape = 6
+    mirrored_l_shape = 7
 
 
 if __name__ == '__main__':

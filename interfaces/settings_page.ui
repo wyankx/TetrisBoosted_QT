@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>form</class>
+ <widget class="QWidget" name="form">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,16 +15,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" alignment="Qt::AlignLeft">
-    <widget class="QPushButton" name="backButton">
+    <widget class="QPushButton" name="back_button">
      <property name="text">
       <string>Back</string>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="control">
       <property name="accessibleName">
@@ -35,17 +35,17 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="4" column="3">
-        <widget class="QPushButton" name="moveRightPushButton">
+        <widget class="QPushButton" name="move_right_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="oneBlockDownLineEdit">
+        <widget class="QLineEdit" name="one_block_down_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -170,24 +170,24 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="oneBlockDownLabel">
+        <widget class="QLabel" name="one_block_down_label">
          <property name="text">
           <string>One block down</string>
          </property>
         </widget>
        </item>
        <item row="5" column="3">
-        <widget class="QPushButton" name="oneBlockDownPushButton">
+        <widget class="QPushButton" name="one_block_down_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="oneBlockDownLineEdit_2">
+        <widget class="QLineEdit" name="drop_piece_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -312,24 +312,24 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QPushButton" name="leftRotatePushButton">
+        <widget class="QPushButton" name="left_rotate_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="moveLeftLabel">
+        <widget class="QLabel" name="move_left_label">
          <property name="text">
           <string>Move Left</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLineEdit" name="moveRightLineEdit">
+        <widget class="QLineEdit" name="move_right_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -454,7 +454,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="leftRotateLineEdit">
+        <widget class="QLineEdit" name="left_rotate_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -579,17 +579,17 @@
         </widget>
        </item>
        <item row="6" column="3">
-        <widget class="QPushButton" name="oneBlockDownPushButton_2">
+        <widget class="QPushButton" name="drop_piece_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="rightRotateLineEdit">
+        <widget class="QLineEdit" name="right_rotate_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -714,31 +714,31 @@
         </widget>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="dropPieceLabel">
+        <widget class="QLabel" name="drop_piece_label">
          <property name="text">
           <string>Drop Piece</string>
          </property>
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="moveRightLabel">
+        <widget class="QLabel" name="move_right_label">
          <property name="text">
           <string>Move Right</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QPushButton" name="rightRotatePushButton">
+        <widget class="QPushButton" name="right_rotate_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="moveLeftLineEdit">
+        <widget class="QLineEdit" name="move_left_line_edit">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -863,31 +863,31 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="leftRotateLabel">
+        <widget class="QLabel" name="left_rotate_label">
          <property name="text">
           <string>Left Rotate</string>
          </property>
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QPushButton" name="moveLeftPushButton">
+        <widget class="QPushButton" name="move_left_push_button">
          <property name="text">
           <string>Remap key</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">controlSettingsButtonGroup</string>
+          <string notr="true">control_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="rightRotateLabel">
+        <widget class="QLabel" name="right_rotate_label">
          <property name="text">
           <string>Right Rotate</string>
          </property>
         </widget>
        </item>
        <item row="7" column="1">
-        <spacer name="verticalSpacer">
+        <spacer name="vertical_spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -907,47 +907,47 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="2">
-        <widget class="QPushButton" name="widthPushButton">
+        <widget class="QPushButton" name="width_push_button">
          <property name="text">
           <string>Set width</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">boardSettingsButtonGroup</string>
+          <string notr="true">board_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="heightLineEdit"/>
+        <widget class="QLineEdit" name="height_line_edit"/>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="heightLabel">
+        <widget class="QLabel" name="height_label">
          <property name="text">
           <string>Heidth</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="widthLineEdit"/>
+        <widget class="QLineEdit" name="width_line_edit"/>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="widthLabel">
+        <widget class="QLabel" name="width_label">
          <property name="text">
           <string>Width</string>
          </property>
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="heightPushButton">
+        <widget class="QPushButton" name="height_push_button">
          <property name="text">
           <string>Set heigth</string>
          </property>
          <attribute name="buttonGroup">
-          <string notr="true">boardSettingsButtonGroup</string>
+          <string notr="true">board_settings_button_group</string>
          </attribute>
         </widget>
        </item>
        <item row="2" column="1">
-        <spacer name="verticalSpacer_2">
+        <spacer name="vertical_spacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -961,20 +961,20 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="backToDefault">
+     <widget class="QWidget" name="back_to_default">
       <attribute name="title">
        <string>Back to default</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="0" column="0">
-        <widget class="QPushButton" name="backToDefaultButton">
+        <widget class="QPushButton" name="back_to_default_button">
          <property name="text">
           <string>Back to default settings</string>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <spacer name="verticalSpacer_3">
+        <spacer name="vertical_spacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -995,7 +995,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="controlSettingsButtonGroup"/>
-  <buttongroup name="boardSettingsButtonGroup"/>
+  <buttongroup name="control_settings_button_group"/>
+  <buttongroup name="board_settings_button_group"/>
  </buttongroups>
 </ui>
