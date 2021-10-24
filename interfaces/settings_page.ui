@@ -24,7 +24,7 @@
    <item row="1" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="control">
       <property name="accessibleName">
@@ -922,7 +922,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="height_label">
          <property name="text">
-          <string>Heidth</string>
+          <string>Heidht</string>
          </property>
         </widget>
        </item>
@@ -995,7 +995,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="control_settings_button_group"/>
   <buttongroup name="board_settings_button_group"/>
+  <buttongroup name="control_settings_button_group"/>
  </buttongroups>
 </ui>

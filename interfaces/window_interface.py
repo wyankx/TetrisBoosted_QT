@@ -1,8 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sqlite3
 
 from PyQt5 import uic
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, QPushButton,\
     QMessageBox
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtCore import Qt
 
 
 class Window(QStackedWidget):  # Interface of Main Window
@@ -133,6 +137,26 @@ class SettingsPage(Page):  # TODO: Interface of settings page
     name_ui_file = 'settings_page.ui'
 
     def initUi(self):
+        data_for_line_edits = self.db_cursor.execute('''SELECT X_WIDTH, Y_HEIGHT, RIGHT_ROTATE,
+        LEFT_ROTATE, MOVE_LEFT, MOVE_RIGHT, ONE_BLOCK_DOWN, DROP_PIECE FROM settings
+        WHERE TYPE == \'Using\'''').fetchone()
+        for data_for_line_edit_index, line_edit in enumerate((self.width_line_edit,
+                                                              self.height_line_edit,
+                                                              self.right_rotate_line_edit,
+                                                              self.left_rotate_line_edit,
+                                                              self.move_left_line_edit,
+                                                              self.move_right_line_edit,
+                                                              self.one_block_down_line_edit,
+                                                              self.drop_piece_line_edit)):
+            if data_for_line_edit_index <= 1:
+                line_edit.setText(str(data_for_line_edits[data_for_line_edit_index]))
+            else:
+                line_edit.setText(
+                    QKeySequence.toString(
+                        QKeySequence(data_for_line_edits[data_for_line_edit_index])))
+        self.tracking_function = None
+
+    def key_press_event(self):
         pass
 
 

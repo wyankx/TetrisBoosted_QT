@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import sqlite3
 import sys
 
@@ -38,10 +40,10 @@ class Board(QWidget):  # Game board
         super().__init__()
         self.main_window = main_window
         self.PIXEL_SIZE = 30
-        self.X_WIDTH, self.Y_HEIGTH = db_cursor.execute('''SELECT X_WIDTH, Y_HEIGTH FROM settings
+        self.X_WIDTH, self.Y_HEIGHT = db_cursor.execute('''SELECT X_WIDTH, Y_HEIGHT FROM settings
         WHERE TYPE == \'Using\'''').fetchone()
-        self.setMinimumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGTH)
-        self.setMaximumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGTH)
+        self.setMinimumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
+        self.setMaximumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
 
     def start_game(self):
         pass
