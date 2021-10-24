@@ -1,7 +1,8 @@
 import sqlite3
 
 from PyQt5 import uic
-from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, QPushButton
+from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, QPushButton,\
+    QMessageBox
 
 
 class Window(QStackedWidget):
@@ -11,12 +12,12 @@ class Window(QStackedWidget):
         self.setWindowTitle('Tetris Boosted')
         for elem in [StartPage, SelectModePage, GamePage, RecordsPage, SettingsPage, HelpPage]:
             elem = elem()
-            elem.setupUi(self, self.db_cursor)
+            elem.setupUi(self.db_cursor, self)
             self.addWidget(elem)
 
 
 class Page(QWidget):
-    def setupUi(self, main_window, db_cursor):
+    def setupUi(self, db_cursor, main_window):
         super().__init__()
         uic.loadUi('interfaces/' + self.name_ui_file, self)
         self.main_window = main_window
@@ -31,7 +32,7 @@ class Page(QWidget):
 class StartPage(Page):
     name_ui_file = 'start_page.ui'
 
-    def setupUi(self, main_window, db_cursor):
+    def setupUi(self, db_cursor: sqlite3.Cursor, main_window: Window):
         super().__init__()
         uic.loadUi('interfaces/' + self.name_ui_file, self)
         self.main_window = main_window
@@ -75,21 +76,57 @@ class RecordsPage(Page):
 
     def initUi(self):
         self.records = self.db_cursor.execute('''SELECT * FROM leader_board
-        ORDER BY score''').fetchmany(10)
+        ORDER BY score''').fetchall()[-1:-10:-1]
         self.widget_elements = []
         self.deleteRecordsButtonGroup = QButtonGroup(self)
-        for elem in records:
-            self.widget_elements.append([])
-            layout = QHBoxLayout()
-            self.recordsWidget.layout().addWidget(layout)
+        for elem in self.records:
+            self.widget_elements.append([elem[0]])  # id from db; Index = 0
+            layout = QHBoxLayout(self)
+            self.widget_elements[-1].append(layout)  # layout for interface; Index = 1
+            self.recordsWidget.layout().addLayout(layout)
             label = QLabel(self)
-            label.setText(elem[1] + ': ' + str(elem[2]))
+            label.setText(str(elem[1]) + ': ' + str(elem[2]))
             layout.addWidget(label)
-            self.widget_elements[-1].append(label)
+            self.widget_elements[-1].append(label)  # label for interface; Index = 2
             button = QPushButton(self)
             button.setText('Delete')
+            self.deleteRecordsButtonGroup.addButton(button)
             layout.addWidget(button)
-            self.widget_elements[-1].append(button)
+            self.widget_elements[-1].append(button)  # button for interface; Index = 3
+        self.deleteRecordsButtonGroup.buttonClicked.connect(self.delete_record)
+
+    def delete_record(self, button):
+        reply = QMessageBox.question(self, 'Delete Item',
+                                     'Are you sure to delete item?', QMessageBox.Yes |
+                                     QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            for elem in self.widget_elements:
+                if elem[3] == button:
+                    self.db_cursor.execute(f'''DELETE FROM leader_board
+                    WHERE id == {elem[0]}''')
+                    self.main_window.db_connect.commit()
+                    self.clear_widget()
+                    self.initUi()
+                    self.recordsWidget.repaint()
+
+    def clear_widget(self):
+        for layout in map(lambda elem: elem[1], self.widget_elements):
+            for i in range(self.recordsWidget.layout().count()):
+                layout_item = self.recordsWidget.layout().itemAt(i)
+                if layout_item.layout() == layout:
+                    self.deleteItemsOfLayout(layout_item.layout())
+                    self.recordsWidget.layout().removeItem(layout_item)
+                    break
+
+    def deleteItemsOfLayout(self, layout):
+        if layout is not None:
+            while layout.count():
+                item = layout.takeAt(0)
+                widget = item.widget()
+                if widget is not None:
+                    widget.setParent(None)
+                else:
+                    self.deleteItemsOfLayout(item.layout())
 
 
 class SettingsPage(Page):
