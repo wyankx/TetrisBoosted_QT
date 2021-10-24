@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>form</class>
+ <widget class="QWidget" name="form">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,28 +15,28 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item alignment="Qt::AlignLeft">
-    <widget class="QPushButton" name="backButton">
+    <widget class="QPushButton" name="back_button">
      <property name="text">
       <string>Back</string>
      </property>
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="helpTiltleLabel">
+    <widget class="QLabel" name="help_tiltle_label">
      <property name="text">
       <string>Help</string>
      </property>
     </widget>
    </item>
    <item alignment="Qt::AlignHCenter">
-    <widget class="QLabel" name="helpTextLabel">
+    <widget class="QLabel" name="help_text_label">
      <property name="text">
-      <string>TextLabel</string>
+      <string/>
      </property>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
+    <spacer name="vertical_spacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

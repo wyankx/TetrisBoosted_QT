@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QApplication, QWidget
 import interfaces.window_interface as window_interface
 
 
-class MainWindow(window_interface.Window):
+class MainWindow(window_interface.Window):  # Main window
     change_window = pyqtSignal(int)
     exit = pyqtSignal()
     win = pyqtSignal(bool)
@@ -16,10 +16,10 @@ class MainWindow(window_interface.Window):
         self.db_connect = sqlite3.connect('app_data.db')
         self.db_cursor = self.db_connect.cursor()
         super().__init__()
-        self.setupUi()
-        self.initUi()
+        self.setup_ui()
+        self.init_ui()
 
-    def initUi(self):
+    def init_ui(self):
         self.change_window[int].connect(self.setCurrentIndex)
         self.exit.connect(self.close)
 
@@ -33,7 +33,7 @@ class MainWindow(window_interface.Window):
         self.board.start_game()
 
 
-class Board(QWidget):
+class Board(QWidget):  # Game board
     def __init__(self, db_cursor: sqlite3.Cursor, main_window: MainWindow):
         super().__init__()
         self.main_window = main_window
@@ -50,27 +50,27 @@ class Board(QWidget):
         self.main_window.win.emit(win)
 
 
-class ExtraBoard(Board):
+class ExtraBoard(Board):  # TODO: Game board for extra mode
     pass
 
 
-class Piece(QWidget):
+class Piece(QWidget):  # TODO: Piece for game
     def __init__(self):
         pass
 
 
-class Tetrominoe:
-    NoShape = 0
-    ZShape = 1
-    SShape = 2
-    LineShape = 3
-    TShape = 4
-    SquareShape = 5
-    LShape = 6
-    MirroredLShape = 7
+class Tetrominoe:  # Indexes types of pieces
+    no_shape = 0
+    z_shape = 1
+    s_shape = 2
+    line_shape = 3
+    t_shape = 4
+    square_shape = 5
+    l_shape = 6
+    mirrored_l_shape = 7
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # Start of programm
     app = QApplication(sys.argv)
     window = MainWindow()
     window.show()
