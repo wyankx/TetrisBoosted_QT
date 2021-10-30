@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
 import sqlite3
-
 from PyQt5 import uic
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, QPushButton,\
     QMessageBox
@@ -9,12 +6,13 @@ from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt
 
 
-class Window(QStackedWidget):  # Interface of Main Window
+class Window(QStackedWidget):  # Interface of main window
     def setup_ui(self):
-        super().__init__()
+        super().__init__()  # Customisation of main window
         self.setGeometry(350, 100, 495, 624)
         self.setWindowTitle('Tetris Boosted')
-        for elem in [StartPage, SelectModePage, GamePage, RecordsPage, SettingsPage, HelpPage]:
+        for elem in [StartPage, SelectModePage, GamePage, RecordsPage, SettingsPage,
+                     HelpPage]:  # Insert pages into main window
             elem = elem()
             elem.setup_ui(self.db_cursor, self)
             self.addWidget(elem)
@@ -22,10 +20,10 @@ class Window(QStackedWidget):  # Interface of Main Window
 
 class Page(QWidget):  # Default interface of pages
     def setup_ui(self, db_cursor, main_window):
-        super().__init__()
+        super().__init__()  # Customisation of page
         uic.loadUi('interfaces/' + self.name_ui_file, self)
-        self.main_window = main_window
-        self.db_cursor = db_cursor
+        self.main_window = main_window  # Main window object
+        self.db_cursor = db_cursor  # Data base cursor
         self.back_button.clicked.connect(self.exit)
         self.initUi()
 
@@ -37,7 +35,7 @@ class StartPage(Page):  # Inteface of start page
     name_ui_file = 'start_page.ui'
 
     def setup_ui(self, db_cursor: sqlite3.Cursor, main_window: Window):
-        super().__init__()
+        super().__init__()  # Customisation of main page
         uic.loadUi('interfaces/' + self.name_ui_file, self)
         self.main_window = main_window
         self.db_cursor = db_cursor
@@ -85,7 +83,7 @@ class RecordsPage(Page):  # Interface of records page
         self.delete_records_button_group = QButtonGroup(self)
         for elem in self.records:
             self.widget_elements.append([elem[0]])  # id from db; Index = 0
-            layout = QHBoxLayout(self)
+            layout = QHBoxLayout()
             self.widget_elements[-1].append(layout)  # layout for interface; Index = 1
             self.records_widget.layout().addLayout(layout)
             label = QLabel(self)
@@ -119,7 +117,7 @@ class RecordsPage(Page):  # Interface of records page
                 layout_item = self.records_widget.layout().itemAt(i)
                 if layout_item.layout() == layout:
                     self.delete_items_of_layout(layout_item.layout())
-                    self.recordsWidget.layout().removeItem(layout_item)
+                    self.records_widget.layout().removeItem(layout_item)
                     break
 
     def delete_items_of_layout(self, layout):
@@ -139,25 +137,91 @@ class SettingsPage(Page):  # TODO: Interface of settings page
     def initUi(self):
         data_for_line_edits = self.db_cursor.execute('''SELECT X_WIDTH, Y_HEIGHT, RIGHT_ROTATE,
         LEFT_ROTATE, MOVE_LEFT, MOVE_RIGHT, ONE_BLOCK_DOWN, DROP_PIECE FROM settings
-        WHERE TYPE == \'Using\'''').fetchone()
-        for data_for_line_edit_index, line_edit in enumerate((self.width_line_edit,
-                                                              self.height_line_edit,
-                                                              self.right_rotate_line_edit,
-                                                              self.left_rotate_line_edit,
-                                                              self.move_left_line_edit,
-                                                              self.move_right_line_edit,
-                                                              self.one_block_down_line_edit,
-                                                              self.drop_piece_line_edit)):
-            if data_for_line_edit_index <= 1:
+        WHERE TYPE == \'Using\'''').fetchone()  # Get data for line edit
+        for index in range(len(data_for_line_edits)):
+            data_for_line_edit_index = index
+            if index <= 1:  # Find line edit in board settings
+                line_edit = self.board.layout().itemAtPosition(index, 1)
+            else:  # Find line edit in control settings
+                line_edit = self.control.layout().itemAtPosition(index - 2, 1)
+            line_edit = line_edit.widget()  # Get line edit
+            if data_for_line_edit_index <= 1:  # Set data for line edit in board settings
                 line_edit.setText(str(data_for_line_edits[data_for_line_edit_index]))
-            else:
-                line_edit.setText(
-                    QKeySequence.toString(
-                        QKeySequence(data_for_line_edits[data_for_line_edit_index])))
-        self.tracking_function = None
+            else:  # Set data for line edit in control settings
+                line_edit.setText(  # Set text
+                    QKeySequence.toString(  # Get string from number
+                        QKeySequence(  # Get key from number
+                            data_for_line_edits[data_for_line_edit_index])))
+        self.tracking_function_input = None
+        self.board_settings_button_group.buttonClicked.connect(self.input_board_settings_clicked)
+        self.control_settings_button_group.buttonClicked.connect(self.input_control_settings_clicked)
+        self.back_to_default_button.clicked.connect(self.return_to_default)
+        self.main_window.change_window[int].connect(lambda num: self.set_key_press_event()
+                                                    if num == 4 else None)
 
-    def key_press_event(self):
+    def set_key_press_event(self):
+        self.main_window.keyPressEvent = self.keyPressEvent
+
+    def input_control_settings_clicked(self, event):
+        self.clear_widget()
+        self.tracking_function_input = []
+        self.tracking_function_input.append(event)  # button of changing data; Index = 0
+        button_pos = self.control.layout().getItemPosition(self.control.layout().indexOf(event))
+        line_edit = self.control.layout().itemAtPosition(button_pos[1], 2)
+        self.tracking_function_input.append(line_edit)  # label of changing data; Index = 1
+        event.setText('Click button')
+
+    def keyPressEvent(self, event):
+        if self.tracking_function_input is not None:
+            if event.key() == Qt.Key_Escape:
+                self.clear_widget()
+            else:
+                setting_name = ('RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT',
+                                'ONE_BLOCK_DOWN',
+                                'DROP_PIECE')[
+                    self.control.layout().getItemPosition(
+                        self.control.layout().indexOf(self.tracking_function_input[0]))[0]]
+                individual_key = True  # Check on individual of button
+                for check_setting in (('RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT',
+                                      'ONE_BLOCK_DOWN', 'DROP_PIECE')):
+                    if check_setting != setting_name and event.key()\
+                            == QKeySequence(self.db_cursor.execute(f'''
+                    SELECT {check_setting} FROM settings WHERE Type == \'Using\'''').fetchone()[0]):
+                        individual_key = False
+                if not individual_key:
+                    self.clear_widget()
+                    self.control_settings_state_label.setText('Select not using button!')
+                else:
+
+
+    def input_board_settings_clicked(self, event):
         pass
+
+    def return_to_default(self):
+        self.db_cursor.execute('''UPDATE settings
+        SET X_WIDTH = (SELECT X_WIDTH FROM settings WHERE TYPE == \'Default\'),
+        Y_HEIGHT = (SELECT Y_HEIGHT FROM settings WHERE TYPE == \'Default\'),
+        RIGHT_ROTATE = (SELECT RIGHT_ROTATE FROM settings WHERE TYPE == \'Default\'),
+        LEFT_ROTATE = (SELECT LEFT_ROTATE FROM settings WHERE TYPE == \'Default\'),
+        MOVE_LEFT = (SELECT MOVE_LEFT FROM settings WHERE TYPE == \'Default\'),
+        MOVE_RIGHT = (SELECT MOVE_RIGHT FROM settings WHERE TYPE == \'Default\'),
+        ONE_BLOCK_DOWN = (SELECT ONE_BLOCK_DOWN FROM settings WHERE TYPE == \'Default\'),
+        DROP_PIECE = (SELECT DROP_PIECE FROM settings WHERE TYPE == \'Default\')
+        WHERE TYPE == \'Using\'''')
+        self.main_window.db_connect.commit()
+        self.initUi()
+
+    def exit(self):
+        self.clear_widget()
+        self.main_window.keyPressEvent = None
+        self.main_window.change_window.emit(0)
+
+    def clear_widget(self):  # Function for return page to default state
+        if self.tracking_function_input is not None:
+            self.tracking_function_input[0].setText('Remap key')
+            self.tracking_function_input = None
+        self.control_settings_state_label.setText('')
+        self.board_settings_state_label.setText('')
 
 
 class HelpPage(Page):  # TODO: Interface of help page
