@@ -173,7 +173,7 @@ class SettingsPage(Page):  # TODO: Interface of settings page
 
     def keyPressEvent(self, event):
         if self.tracking_function_input is not None:
-            if event.key() == Qt.Key_Escape:
+            if event.key() == Qt.Key_Escape:  # "Escape" button deselects button
                 self.clear_widget()
             else:
                 setting_name = ('RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT',
@@ -192,7 +192,12 @@ class SettingsPage(Page):  # TODO: Interface of settings page
                     self.clear_widget()
                     self.control_settings_state_label.setText('Select not using button!')
                 else:
-
+                    self.db_cursor.execute(f'''UPDATE settings
+                    SET {setting_name} = {event.key()}
+                    WHERE TYPE == \'Using\'''')
+                    self.main_window.db_connect.commit()
+                    self.clear_widget()
+                    self.initUi()
 
     def input_board_settings_clicked(self, event):
         pass
