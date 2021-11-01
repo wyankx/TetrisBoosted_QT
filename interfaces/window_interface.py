@@ -69,8 +69,8 @@ class GamePage(Page):  # Interface of game
         self.main_window.change_window.emit(0)
 
     def initUi(self):
-        self.main_window.win[bool].connect(lambda win: self.stateLabel.setText(
-            'You' + ('win' if win else 'lose') + '!'))
+        self.main_window.finish_game[int].connect(lambda score: self.stateLabel.setText(
+            'Your score: ' + str(score)))
 
 
 class RecordsPage(Page):  # Interface of records page
@@ -179,8 +179,8 @@ class SettingsPage(Page):  # TODO: Interface of settings page
                         self.control.layout().indexOf(self.tracking_function_input))[0]]
                 individual_key = True  # Check on individual of button
                 for check_setting in (('RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT',
-                                      'ONE_BLOCK_DOWN', 'DROP_PIECE')):
-                    if check_setting != setting_name and event.key()\
+                                       'ONE_BLOCK_DOWN', 'DROP_PIECE')):
+                    if check_setting != setting_name and event.key() \
                             == QKeySequence(self.db_cursor.execute(f'''
                     SELECT {check_setting} FROM settings WHERE Type == \'Using\'''').fetchone()[0]):
                         individual_key = False
@@ -257,7 +257,7 @@ class HelpPage(Page):  # TODO: Interface of help page
         LEFT_ROTATE, MOVE_LEFT, MOVE_RIGHT, ONE_BLOCK_DOWN, DROP_PIECE FROM settings
         WHERE TYPE == \'Using\'''').fetchone()  # Get data for line edit
         data_names = ['Right rotate',
-        'Left rotate', 'Move left', 'Move right', 'One block down', 'Drop piece']
+                      'Left rotate', 'Move left', 'Move right', 'One block down', 'Drop piece']
         out = f'''Goal:
 Fill as many blocks as possible with blocks.
 From ever delivered piece you get 10 points
