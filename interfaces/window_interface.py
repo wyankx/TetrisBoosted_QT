@@ -248,4 +248,24 @@ class HelpPage(Page):  # TODO: Interface of help page
     name_ui_file = 'help_page.ui'
 
     def initUi(self):
-        pass
+        self.set_text()
+        self.main_window.change_window[int].connect(lambda num: self.set_text if num == 5
+                                                    else None)
+
+    def set_text(self):
+        control_data = self.db_cursor.execute('''SELECT RIGHT_ROTATE,
+        LEFT_ROTATE, MOVE_LEFT, MOVE_RIGHT, ONE_BLOCK_DOWN, DROP_PIECE FROM settings
+        WHERE TYPE == \'Using\'''').fetchone()  # Get data for line edit
+        data_names = ['Right rotate',
+        'Left rotate', 'Move left', 'Move right', 'One block down', 'Drop piece']
+        out = f'''Goal:
+Fill as many blocks as possible with blocks.
+From ever delivered piece you get 10 points
+From ever filled line you get 100 points
+Extra mode:
+You have 3 seconds before the item falls
+Control:'''
+        for index, data in enumerate(control_data):
+            out += f'\n{data_names[index]}:' \
+                   f' "{QKeySequence.toString(QKeySequence(control_data[index]))}"'
+        self.help_text_label.setText(out)
