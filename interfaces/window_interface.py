@@ -164,11 +164,7 @@ class SettingsPage(Page):  # TODO: Interface of settings page
 
     def input_control_settings_clicked(self, event):
         self.clear_widget()
-        self.tracking_function_input = []
-        self.tracking_function_input.append(event)  # button of changing data; Index = 0
-        button_pos = self.control.layout().getItemPosition(self.control.layout().indexOf(event))
-        line_edit = self.control.layout().itemAtPosition(button_pos[1], 2)
-        self.tracking_function_input.append(line_edit)  # label of changing data; Index = 1
+        self.tracking_function_input = event
         event.setText('Click button')
 
     def keyPressEvent(self, event):
@@ -180,7 +176,7 @@ class SettingsPage(Page):  # TODO: Interface of settings page
                                 'ONE_BLOCK_DOWN',
                                 'DROP_PIECE')[
                     self.control.layout().getItemPosition(
-                        self.control.layout().indexOf(self.tracking_function_input[0]))[0]]
+                        self.control.layout().indexOf(self.tracking_function_input))[0]]
                 individual_key = True  # Check on individual of button
                 for check_setting in (('RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT',
                                       'ONE_BLOCK_DOWN', 'DROP_PIECE')):
@@ -200,7 +196,26 @@ class SettingsPage(Page):  # TODO: Interface of settings page
                     self.initUi()
 
     def input_board_settings_clicked(self, event):
-        pass
+        button_pos = self.board.layout().getItemPosition(self.board.layout().indexOf(event))
+        line_edit = self.board.layout().itemAtPosition(button_pos[0], 1).widget()
+        setting_name = ('X_WIDTH', 'Y_HEIGHT')[self.board.layout().getItemPosition(
+            self.board.layout().indexOf(event))[0]]
+        num = line_edit.text()
+        if not num.isdigit():
+            self.clear_widget()
+            self.board_settings_state_label.setText('Select number!')
+        else:
+            num = int(num)
+            if 5 < num < 30:
+                self.clear_widget()
+                self.db_cursor.execute(f'''UPDATE settings
+                SET {setting_name} = {num}
+                WHERE TYPE = \'Using\'''')
+                self.main_window.db_connect.commit()
+            else:
+                self.clear_widget()
+                self.board_settings_state_label.setText('Select number bigger than 5 and '
+                                                        'lower than 30')
 
     def return_to_default(self):
         self.db_cursor.execute('''UPDATE settings
@@ -223,7 +238,7 @@ class SettingsPage(Page):  # TODO: Interface of settings page
 
     def clear_widget(self):  # Function for return page to default state
         if self.tracking_function_input is not None:
-            self.tracking_function_input[0].setText('Remap key')
+            self.tracking_function_input.setText('Remap key')
             self.tracking_function_input = None
         self.control_settings_state_label.setText('')
         self.board_settings_state_label.setText('')

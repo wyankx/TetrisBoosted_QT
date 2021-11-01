@@ -34,16 +34,6 @@
        <string>Control</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="3">
-        <widget class="QPushButton" name="left_rotate_push_button">
-         <property name="text">
-          <string>Remap key</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">control_settings_button_group</string>
-         </attribute>
-        </widget>
-       </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="left_rotate_line_edit">
          <property name="enabled">
@@ -169,18 +159,14 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="right_rotate_label">
+       <item row="1" column="3">
+        <widget class="QPushButton" name="left_rotate_push_button">
          <property name="text">
-          <string>Right Rotate</string>
+          <string>Remap key</string>
          </property>
-        </widget>
-       </item>
-       <item row="9" column="1">
-        <widget class="QLabel" name="control_settings_state_label">
-         <property name="text">
-          <string/>
-         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">control_settings_button_group</string>
+         </attribute>
         </widget>
        </item>
        <item row="2" column="1">
@@ -305,6 +291,13 @@
             </colorrole>
            </disabled>
           </palette>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QLabel" name="control_settings_state_label">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -906,6 +899,13 @@
          </attribute>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="right_rotate_label">
+         <property name="text">
+          <string>Right Rotate</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="board">
@@ -913,19 +913,6 @@
        <string>Board</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="width_line_edit"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="height_label">
-         <property name="text">
-          <string>Heidht</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="height_line_edit"/>
-       </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="width_push_button">
          <property name="text">
@@ -936,10 +923,33 @@
          </attribute>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="width_line_edit"/>
+       </item>
        <item row="0" column="0">
         <widget class="QLabel" name="width_label">
          <property name="text">
           <string>Width</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QPushButton" name="height_push_button">
+         <property name="text">
+          <string>Set heigth</string>
+         </property>
+         <attribute name="buttonGroup">
+          <string notr="true">board_settings_button_group</string>
+         </attribute>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="height_line_edit"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="height_label">
+         <property name="text">
+          <string>Heidht</string>
          </property>
         </widget>
        </item>
@@ -956,17 +966,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="2">
-        <widget class="QPushButton" name="height_push_button">
-         <property name="text">
-          <string>Set heigth</string>
-         </property>
-         <attribute name="buttonGroup">
-          <string notr="true">board_settings_button_group</string>
-         </attribute>
-        </widget>
-       </item>
-       <item row="3" column="1">
+       <item row="3" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
         <widget class="QLabel" name="board_settings_state_label">
          <property name="text">
           <string/>
