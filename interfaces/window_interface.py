@@ -64,12 +64,13 @@ class GamePage(Page):  # Interface of game
     name_ui_file = 'game_page.ui'
 
     def exit(self):
-        self.layout().removeItem(self.layout().itemAt(0))
+        self.layout().itemAt(0).widget().finish_game()
+        self.layout().itemAt(0).widget().setParent(None)
         self.state_label.setText('')
         self.main_window.change_window.emit(0)
 
     def initUi(self):
-        self.main_window.finish_game[int].connect(lambda score: self.stateLabel.setText(
+        self.main_window.finish_game[int].connect(lambda score: self.state_label.setText(
             'Your score: ' + str(score)))
 
 
