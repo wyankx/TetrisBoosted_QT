@@ -5,7 +5,8 @@ import sqlite3
 import sys
 import random
 from PyQt5.QtCore import pyqtSignal, QBasicTimer, QPropertyAnimation, QRect, QEasingCurve,\
-    QAbstractAnimation, QPoint
+    QAbstractAnimation, QPoint, QRectF, Qt
+from PyQt5.QtGui import QKeySequence, QPainterPath, QPainter, QColor, QPen
 from PyQt5.QtWidgets import QApplication, QWidget
 import interfaces.window_interface as window_interface
 
@@ -25,6 +26,9 @@ class MainWindow(window_interface.Window):  # Main window
     def init_ui(self):
         self.change_window[int].connect(self.setCurrentIndex)
         self.exit.connect(self.close)
+
+    def keyPressEvent(self, event):
+        self.currentWidget().keyPressEvent(event)
 
     def start_game(self, extra_mode):
         if extra_mode:
@@ -60,6 +64,8 @@ class Board(QWidget):  # Game board
         self.score = 0
         self.time = 0
         self.new_piece()
+        self.main_window.keyPressEvent = self.keyPressEvent
+        self.main_window.back_button.setFocusPolicy(Qt.NoFocus)
         self.timer.start(self.SPEED, self)
 
     def timerEvent(self, event):
@@ -71,6 +77,7 @@ class Board(QWidget):  # Game board
                 self.new_piece()
             else:
                 self.one_line_down()
+            self.update()
 
     def one_line_down(self):
         if not self.try_move(self.current_piece, self.current_piece.board_coords[0],
@@ -79,10 +86,10 @@ class Board(QWidget):  # Game board
 
     def piece_dropped(self):
         for i in range(4):
-            x = self.current_piece.board_coords[0] + self.current_piece.coords[i][0]
-            y = self.current_piece.board_coords[1] - self.current_piece.coords[i][1]
+            x = self.current_piece.board_coords[0] + self.current_piece.x(i)
+            y = self.current_piece.board_coords[1] - self.current_piece.y(i)
             self.set_shape_at(x, y, self.current_piece.shape)
-            # self.current_piece.squares[i].setParent(None)
+            self.current_piece.squares[i].setParent(None)
         self.remove_full_lines()
         self.score += 10
         self.update_data()
@@ -90,15 +97,83 @@ class Board(QWidget):  # Game board
             self.new_piece()
 
     def remove_full_lines(self):
-        pass
+        num_full_lines = 0
+        rows_to_remove = []
+        for num_of_row in range(self.Y_HEIGHT):
+            count_pieces_on_line = 0
+            for x in range(self.X_WIDTH):
+                if self.shape_at(x, num_of_row) != Tetrominoe.no_shape:
+                    count_pieces_on_line += 1
+            if count_pieces_on_line == self.X_WIDTH:
+                rows_to_remove.append(num_of_row)
+        for line_num in rows_to_remove:
+            for y in range(line_num, 0, -1):
+                for x in range(self.X_WIDTH):
+                    self.set_shape_at(x, y, self.shape_at(x, y - 1))
+        num_full_lines = num_full_lines + len(rows_to_remove)
+        if num_full_lines > 0:
+            self.score = num_full_lines * 100
+            self.update_data()
+            self.waiting_next_piece = True
+            self.current_piece.set_shape(Tetrominoe.no_shape)
+            self.update()
+
+    def keyPressEvent(self, event):
+        if not self.is_started or self.current_piece.shape == Tetrominoe.no_shape:
+            return
+        key = event.key()
+        keys = {func: QKeySequence(key) for func, key in
+                zip(['RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT', 'ONE_BLOCK_DOWN',
+                     'DROP_PIECE'], self.main_window.db_cursor.execute('''
+        SELECT RIGHT_ROTATE, LEFT_ROTATE, MOVE_LEFT, MOVE_RIGHT, ONE_BLOCK_DOWN, DROP_PIECE
+        FROM settings WHERE TYPE == \'Using\'''').fetchone())}
+        if key == keys['RIGHT_ROTATE']:
+            if self.current_piece.shape != Tetrominoe.square_shape:
+                piece = self.current_piece.rotate_right()
+                if self.try_move(piece, *self.current_piece.board_coords):
+                    for i in range(4):
+                        self.current_piece.squares[i].setParent(None)
+                    self.current_piece = piece
+                else:
+                    for i in range(4):
+                        piece.squares[i].setParent(None)
+        elif key == keys['LEFT_ROTATE']:
+            if self.current_piece.shape != Tetrominoe.square_shape:
+                piece = self.current_piece.rotate_left()
+                if self.try_move(piece, *self.current_piece.board_coords):
+                    for i in range(4):
+                        self.current_piece.squares[i].setParent(None)
+                    self.current_piece = piece
+                else:
+                    for i in range(4):
+                        piece.squares[i].setParent(None)
+        elif key == keys['MOVE_LEFT']:
+            self.try_move(self.current_piece, self.current_piece.board_coords[0] - 1,
+                          self.current_piece.board_coords[1])
+        elif key == keys['MOVE_RIGHT']:
+            self.try_move(self.current_piece, self.current_piece.board_coords[0] + 1,
+                          self.current_piece.board_coords[1])
+        elif key == keys['ONE_BLOCK_DOWN']:
+            self.one_line_down()
+        elif key == keys['DROP_PIECE']:
+            self.drop_piece()
+
+    def drop_piece(self):
+        new_y = self.current_piece.board_coords[1]
+        while new_y < self.Y_HEIGHT:
+            if not self.try_move(self.current_piece, self.current_piece.board_coords[0], new_y + 1):
+                break
+            new_y += 1
+        self.piece_dropped()
 
     def set_shape_at(self, x, y, piece):
-        self.board[y][x] = piece
+        if y >= 0:
+            self.board[y][x] = piece
 
     def try_move(self, piece, new_x, new_y):
         for i in range(4):
-            x = new_x + piece.coords[i][0]
-            y = new_y - piece.coords[i][1]
+            x = new_x + piece.x(i)
+            y = new_y - piece.y(i)
             if x < 0 or x >= self.X_WIDTH or y >= self.Y_HEIGHT:
                 return False
             if self.shape_at(x, y) != Tetrominoe.no_shape:
@@ -108,7 +183,7 @@ class Board(QWidget):  # Game board
 
     def new_piece(self):
         shape = random.randint(1, 7)
-        self.current_piece = Piece(self, self.X_WIDTH // 2 + 1,
+        self.current_piece = Piece(self, self.X_WIDTH // 2,
                                    -1 + Tetrominoe().min_y(shape))
         self.current_piece.set_shape(shape)
         if not self.try_move(self.current_piece, self.current_piece.board_coords[0],
@@ -126,10 +201,32 @@ class Board(QWidget):  # Game board
         self.main_window.score_LCD_number.display(self.score)
         self.main_window.time_LCD_number.display(round(self.time))
 
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        for y in range(self.Y_HEIGHT):
+            for x in range(self.X_WIDTH):
+                shape = self.shape_at(x, y)
+                if shape != Tetrominoe.no_shape:
+                    self.draw_square(x, y, shape, painter)
+
+    def draw_square(self, x, y, shape, painter):
+        color = QColor(*list(map(int, Tetrominoe.colors[shape].split(', '))))
+        rect_path = QPainterPath()
+        rect_path.addRoundedRect(QRectF(self.PIXEL_SIZE * x, self.PIXEL_SIZE * y,
+                                        self.PIXEL_SIZE, self.PIXEL_SIZE),
+                                 2, 2)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(color)
+        painter.drawPath(rect_path)
+
     def finish_game(self):
         self.timer.stop()
         self.is_started = False
         self.main_window.main_window.finish_game.emit(self.score)
+        type = ('Default' if self.__class__ == Board else 'Extra')
+        self.main_window.db_cursor.execute(f'''INSERT INTO leader_board (type, score) VALUES
+        (\'{type}\', \'{self.score}\')''')
+        self.main_window.main_window.db_connect.commit()
 
     def shape_at(self, x, y):
         if y < 0:
@@ -141,7 +238,7 @@ class ExtraBoard(Board):  # TODO: Game board for extra mode
     pass
 
 
-class Piece(QWidget):  # TODO: Piece for game
+class Piece(QWidget):  # Piece for game
     def __init__(self, board: Board, cur_x, cur_y):
         self.board = board
         self.board_coords = [cur_x, cur_y]
@@ -150,8 +247,6 @@ class Piece(QWidget):  # TODO: Piece for game
         self.set_shape(Tetrominoe.no_shape)
 
     def set_shape(self, shape):
-        colors = ['0, 0, 0', '204, 102, 102', '102, 204, 102', '102, 102, 204',
-                  '204, 204, 102', '204, 102, 204', '102, 204, 204', '218, 170, 0']
         table = Tetrominoe.pieces[shape]
         for i in range(4):
             for j in range(2):
@@ -159,17 +254,45 @@ class Piece(QWidget):  # TODO: Piece for game
             if type(self.squares[i]) == QWidget:
                 self.squares[i].setParent(None)
                 self.squares[i] = None
-            self.squares[i] = QWidget(self.board)
-            x = self.coords[i][0] + self.board_coords[0]
-            y = -self.coords[i][1] + self.board_coords[1]
-            self.squares[i].setGeometry(self.board.PIXEL_SIZE * x,
-                                        self.board.PIXEL_SIZE * y,
-                                        self.board.PIXEL_SIZE, self.board.PIXEL_SIZE)
-            self.squares[i].setStyleSheet(f'background-color: rgb({colors[shape]});'
-                                          f'border-radius:2px;')
-            self.squares[i].show()
-
+            if shape != Tetrominoe.no_shape:
+                self.squares[i] = QWidget(self.board)
+                x = self.x(i) + self.board_coords[0]
+                y = -self.y(i) + self.board_coords[1]
+                self.squares[i].setGeometry(self.board.PIXEL_SIZE * x,
+                                            self.board.PIXEL_SIZE * y,
+                                            self.board.PIXEL_SIZE, self.board.PIXEL_SIZE)
+                self.squares[i].setStyleSheet(f'background-color: rgb({Tetrominoe.colors[shape]});'
+                                              f'border-radius:2px;')
+                self.squares[i].show()
         self.shape = shape
+
+    def x(self, index):
+        return self.coords[index][0]
+
+    def y(self, index):
+        return self.coords[index][1]
+
+    def set_x(self, index, x):
+        self.coords[index][0] = x
+
+    def set_y(self, index, y):
+        self.coords[index][1] = y
+
+    def rotate_left(self):
+        result = Piece(self.board, *self.board_coords)
+        result.set_shape(self.shape)
+        for index in range(4):
+            result.set_x(index, -self.y(index))
+            result.set_y(index, self.x(index))
+        return result
+
+    def rotate_right(self):
+        result = Piece(self.board, *self.board_coords)
+        result.set_shape(self.shape)
+        for index in range(4):
+            result.set_x(index, self.y(index))
+            result.set_y(index, -self.x(index))
+        return result
 
     def animate_self(self, new_x, new_y):
         self.board_coords = [new_x, new_y]
@@ -188,6 +311,8 @@ class Piece(QWidget):  # TODO: Piece for game
 
 
 class Tetrominoe:  # Data of pieces
+    colors = ['0, 0, 0', '204, 102, 102', '102, 204, 102', '102, 102, 204',
+              '204, 204, 102', '204, 102, 204', '102, 204, 204', '218, 170, 0']
     pieces = (((0, 0), (0, 0), (0, 0), (0, 0)),
               ((0, -1), (0, 0), (-1, 0), (-1, 1)),
               ((0, -1), (0, 0), (1, 0), (1, 1)),

@@ -64,7 +64,8 @@ class GamePage(Page):  # Interface of game
     name_ui_file = 'game_page.ui'
 
     def exit(self):
-        self.layout().itemAt(0).widget().finish_game()
+        self.layout().itemAt(0).widget().timer.stop()
+        self.layout().itemAt(0).widget().is_started = False
         self.layout().itemAt(0).widget().setParent(None)
         self.state_label.setText('')
         self.main_window.change_window.emit(0)
@@ -97,6 +98,12 @@ class RecordsPage(Page):  # Interface of records page
             layout.addWidget(button)
             self.widget_elements[-1].append(button)  # button for interface; Index = 3
         self.delete_records_button_group.buttonClicked.connect(self.delete_record)
+        self.main_window.change_window[int].connect(lambda num: self.update_data() if num == 3 else
+                                                    None)
+
+    def update_data(self):
+        self.clear_widget()
+        self.initUi()
 
     def delete_record(self, button):
         reply = QMessageBox.question(self, 'Delete Item',
@@ -157,11 +164,6 @@ class SettingsPage(Page):  # TODO: Interface of settings page
         self.board_settings_button_group.buttonClicked.connect(self.input_board_settings_clicked)
         self.control_settings_button_group.buttonClicked.connect(self.input_control_settings_clicked)
         self.back_to_default_button.clicked.connect(self.return_to_default)
-        self.main_window.change_window[int].connect(lambda num: self.set_key_press_event()
-                                                    if num == 4 else None)
-
-    def set_key_press_event(self):
-        self.main_window.keyPressEvent = self.keyPressEvent
 
     def input_control_settings_clicked(self, event):
         self.clear_widget()
@@ -234,7 +236,6 @@ class SettingsPage(Page):  # TODO: Interface of settings page
 
     def exit(self):
         self.clear_widget()
-        self.main_window.keyPressEvent = None
         self.main_window.change_window.emit(0)
 
     def clear_widget(self):  # Function for return page to default state
