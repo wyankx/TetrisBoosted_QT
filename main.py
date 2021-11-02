@@ -4,7 +4,7 @@ from pprint import pprint
 import sqlite3
 import sys
 import random
-from PyQt5.QtCore import pyqtSignal, QBasicTimer, QPropertyAnimation, QRect, QEasingCurve,\
+from PyQt5.QtCore import pyqtSignal, QBasicTimer, QPropertyAnimation, QRect, QEasingCurve, \
     QAbstractAnimation, QPoint, QRectF, Qt
 from PyQt5.QtGui import QKeySequence, QPainterPath, QPainter, QColor, QPen
 from PyQt5.QtWidgets import QApplication, QWidget
