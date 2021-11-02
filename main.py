@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pprint import pprint
 import sqlite3
 import sys
 import random
