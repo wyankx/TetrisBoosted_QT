@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 class Window(QStackedWidget):  # Interface of main window
     def setup_ui(self):
         super().__init__()  # Customisation of main window
-        self.setGeometry(350, 100, 495, 624)
+        self.setGeometry(350, 100, 530, 624)
         self.setWindowTitle('Tetris Boosted')
         for elem in [StartPage, SelectModePage, GamePage, RecordsPage, SettingsPage,
                      HelpPage]:  # Insert pages into main window
@@ -66,6 +66,10 @@ class GamePage(Page):  # Interface of game
     def exit(self):
         self.layout().itemAt(0).widget().timer.stop()
         self.layout().itemAt(0).widget().is_started = False
+        try:
+            self.layout().itemAt(0).widget().extra_timer.stop()
+        except AttributeError:
+            pass
         self.layout().itemAt(0).widget().setParent(None)
         self.state_label.setText('')
         self.main_window.change_window.emit(0)
@@ -251,7 +255,7 @@ class HelpPage(Page):  # TODO: Interface of help page
 
     def initUi(self):
         self.set_text()
-        self.main_window.change_window[int].connect(lambda num: self.set_text if num == 5
+        self.main_window.change_window[int].connect(lambda num: self.set_text() if num == 5
                                                     else None)
 
     def set_text(self):

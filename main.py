@@ -112,7 +112,7 @@ class Board(QWidget):  # Game board
                     self.set_shape_at(x, y, self.shape_at(x, y - 1))
         num_full_lines = num_full_lines + len(rows_to_remove)
         if num_full_lines > 0:
-            self.score = num_full_lines * 100
+            self.score += num_full_lines * 100
             self.update_data()
             self.waiting_next_piece = True
             self.current_piece.set_shape(Tetrominoe.no_shape)
@@ -129,24 +129,18 @@ class Board(QWidget):  # Game board
         FROM settings WHERE TYPE == \'Using\'''').fetchone())}
         if key == keys['RIGHT_ROTATE']:
             if self.current_piece.shape != Tetrominoe.square_shape:
-                piece = self.current_piece.rotate_right()
+                piece = self.current_piece.rotate_clone_right()
                 if self.try_move(piece, *self.current_piece.board_coords):
-                    for i in range(4):
-                        self.current_piece.squares[i].setParent(None)
-                    self.current_piece = piece
-                else:
-                    for i in range(4):
-                        piece.squares[i].setParent(None)
+                    self.current_piece.rotate_right()
+                for i in range(4):
+                    piece.squares[i].setParent(None)
         elif key == keys['LEFT_ROTATE']:
             if self.current_piece.shape != Tetrominoe.square_shape:
-                piece = self.current_piece.rotate_left()
+                piece = self.current_piece.rotate_clone_left()
                 if self.try_move(piece, *self.current_piece.board_coords):
-                    for i in range(4):
-                        self.current_piece.squares[i].setParent(None)
-                    self.current_piece = piece
-                else:
-                    for i in range(4):
-                        piece.squares[i].setParent(None)
+                    self.current_piece.rotate_left()
+                for i in range(4):
+                    piece.squares[i].setParent(None)
         elif key == keys['MOVE_LEFT']:
             self.try_move(self.current_piece, self.current_piece.board_coords[0] - 1,
                           self.current_piece.board_coords[1])
@@ -235,7 +229,27 @@ class Board(QWidget):  # Game board
 
 
 class ExtraBoard(Board):  # TODO: Game board for extra mode
-    pass
+    def __init__(self, db_cursor: sqlite3.Cursor, main_window):
+        super().__init__(db_cursor, main_window)
+        self.extra_timer = QBasicTimer()
+
+    def start_game(self):
+        super().start_game()
+        self.extra_timer.start(3000, self)
+
+    def timerEvent(self, event):
+        if event.timerId() == self.extra_timer.timerId():
+            self.drop_piece()
+        else:
+            super().timerEvent(event)
+
+    def piece_dropped(self):
+        super().piece_dropped()
+        self.extra_timer.start(3000, self)
+
+    def finish_game(self):
+        super().finish_game()
+        self.extra_timer.stop()
 
 
 class Piece(QWidget):  # Piece for game
@@ -278,7 +292,7 @@ class Piece(QWidget):  # Piece for game
     def set_y(self, index, y):
         self.coords[index][1] = y
 
-    def rotate_left(self):
+    def rotate_clone_left(self):
         result = Piece(self.board, *self.board_coords)
         result.set_shape(self.shape)
         for index in range(4):
@@ -286,13 +300,25 @@ class Piece(QWidget):  # Piece for game
             result.set_y(index, self.x(index))
         return result
 
-    def rotate_right(self):
+    def rotate_clone_right(self):
         result = Piece(self.board, *self.board_coords)
         result.set_shape(self.shape)
         for index in range(4):
             result.set_x(index, self.y(index))
             result.set_y(index, -self.x(index))
         return result
+
+    def rotate_left(self):
+        for index in range(4):
+            x, y = self.x(index), self.y(index)
+            self.set_x(index, -y)
+            self.set_y(index, x)
+
+    def rotate_right(self):
+        for index in range(4):
+            x, y = self.x(index), self.y(index)
+            self.set_x(index, y)
+            self.set_y(index, -x)
 
     def animate_self(self, new_x, new_y):
         self.board_coords = [new_x, new_y]
