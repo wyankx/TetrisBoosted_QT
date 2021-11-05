@@ -51,6 +51,7 @@ class Board(QWidget):  # Game board
         self.setMaximumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
 
         self.timer = QBasicTimer()
+        self.drop_timer = QBasicTimer()
         self.board = []
         self.is_started = False
         self.next_piece = False
@@ -77,6 +78,9 @@ class Board(QWidget):  # Game board
             else:
                 self.one_line_down()
             self.update()
+        if event.timerId() == self.drop_timer.timerId():
+            self.piece_dropped()
+            self.drop_timer.stop()
 
     def one_line_down(self):
         if not self.try_move(self.current_piece, self.current_piece.board_coords[0],
@@ -157,7 +161,7 @@ class Board(QWidget):  # Game board
             if not self.try_move(self.current_piece, self.current_piece.board_coords[0], new_y + 1):
                 break
             new_y += 1
-        self.piece_dropped()
+        self.drop_timer.start(100, self)
 
     def set_shape_at(self, x, y, piece):
         if y >= 0:
