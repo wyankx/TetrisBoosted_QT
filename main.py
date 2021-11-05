@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 import sys
+import os
 import random
 from PyQt5.QtCore import pyqtSignal, QBasicTimer, QPropertyAnimation, QRect, QEasingCurve, \
-    QAbstractAnimation, QPoint, QRectF, Qt
+    QAbstractAnimation, QPoint, QRectF, Qt, QUrl
+from PyQt5.QtMultimedia import QMediaPlaylist, QMediaContent, QMediaPlayer
 from PyQt5.QtGui import QKeySequence, QPainterPath, QPainter, QColor, QPen
 from PyQt5.QtWidgets import QApplication, QWidget
 import interfaces.window_interface as window_interface
@@ -25,6 +27,16 @@ class MainWindow(window_interface.Window):  # Main window
     def init_ui(self):
         self.change_window[int].connect(self.setCurrentIndex)
         self.exit.connect(self.close)
+
+        full_file_path = os.path.join(os.getcwd(), 'music.mp3')
+        self.playlist = QMediaPlaylist()
+        url = QUrl.fromLocalFile(full_file_path)
+        self.playlist.addMedia(QMediaContent(url))
+        self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
+
+        self.player = QMediaPlayer()
+        self.player.setPlaylist(self.playlist)
+        self.player.play()
 
     def keyPressEvent(self, event):
         self.currentWidget().keyPressEvent(event)
