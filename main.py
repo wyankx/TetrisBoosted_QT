@@ -97,7 +97,8 @@ class Board(QWidget):  # Game board
 
     def one_line_down(self):
         if not self.try_move(self.current_piece, self.current_piece.board_coords[0],
-                             self.current_piece.board_coords[1] + 1):
+                             self.current_piece.board_coords[1] + 1) and \
+                not self.drop_timer.isActive():
             self.piece_dropped()
 
     def piece_dropped(self):
