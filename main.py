@@ -138,9 +138,9 @@ class Board(QWidget):  # Game board
 
     def keyPressEvent(self, event):
         if not self.is_started or self.current_piece.shape == Tetrominoe.no_shape:
-            return False
+            return
         if self.drop_timer.isActive():
-            return False
+            return
         key = event.key()
         keys = {func: QKeySequence(key) for func, key in
                 zip(['RIGHT_ROTATE', 'LEFT_ROTATE', 'MOVE_LEFT', 'MOVE_RIGHT', 'ONE_BLOCK_DOWN',
