@@ -43,7 +43,6 @@ class Board(QWidget):  # Game board
     def __init__(self, db_cursor: sqlite3.Cursor, main_window):
         super().__init__()
         self.main_window = main_window
-        self.show()
         self.PIXEL_SIZE = 30
         self.SPEED = 300
         self.X_WIDTH, self.Y_HEIGHT = db_cursor.execute('''SELECT X_WIDTH, Y_HEIGHT FROM settings
@@ -66,6 +65,7 @@ class Board(QWidget):  # Game board
         self.main_window.keyPressEvent = self.keyPressEvent
         self.main_window.back_button.setFocusPolicy(Qt.NoFocus)
         self.timer.start(self.SPEED, self)
+        self.show()
 
     def timerEvent(self, event):
         if event.timerId() == self.timer.timerId():
@@ -243,8 +243,9 @@ class ExtraBoard(Board):  # TODO: Game board for extra mode
             super().timerEvent(event)
 
     def piece_dropped(self):
-        super().piece_dropped()
-        self.extra_timer.start(3000, self)
+        if self.is_started:
+            super().piece_dropped()
+            self.extra_timer.start(3000, self)
 
     def finish_game(self):
         super().finish_game()
