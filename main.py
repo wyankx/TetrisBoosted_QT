@@ -60,6 +60,7 @@ class Board(QWidget):  # Game board
         self.set_clear_board()
         self.is_started = True
         self.waiting_next_piece = False
+        self.wait_remove_line = False
         self.score = 0
         self.time = 0
         self.new_piece()
@@ -92,7 +93,8 @@ class Board(QWidget):  # Game board
             x = self.current_piece.board_coords[0] + self.current_piece.x(i)
             y = self.current_piece.board_coords[1] - self.current_piece.y(i)
             self.set_shape_at(x, y, self.current_piece.shape)
-            self.current_piece.squares[i].setParent(None)
+            if self.current_piece.squares[i] is not None:
+                self.current_piece.squares[i].setParent(None)
         self.remove_full_lines()
         self.score += 10
         self.update_data()
