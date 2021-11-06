@@ -90,10 +90,13 @@ class Board(QWidget):  # Game board
                 self.new_piece()
             else:
                 self.one_line_down()
-            self.update()
+            if self.prev_board != self.board:
+                self.update()
+                self.prev_board = self.board
         if event.timerId() == self.drop_timer.timerId():
             self.piece_dropped()
             self.drop_timer.stop()
+            self.update()
 
     def one_line_down(self):
         if not self.try_move(self.current_piece, self.current_piece.board_coords[0],
@@ -210,6 +213,7 @@ class Board(QWidget):  # Game board
     def set_clear_board(self):
         self.board = [[Tetrominoe.no_shape for _ in range(self.X_WIDTH)]
                       for _ in range(self.Y_HEIGHT)]
+        self.prev_board = self.board
 
     def update_data(self):
         self.main_window.score_LCD_number.display(self.score)
