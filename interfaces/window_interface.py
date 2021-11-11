@@ -143,7 +143,7 @@ class RecordsPage(Page):  # Interface of records page
                     self.delete_items_of_layout(item.layout())
 
 
-class SettingsPage(Page):  # TODO: Interface of settings page
+class SettingsPage(Page):
     name_ui_file = 'settings_page.ui'
 
     def initUi(self):
@@ -250,7 +250,7 @@ class SettingsPage(Page):  # TODO: Interface of settings page
         self.board_settings_state_label.setText('')
 
 
-class HelpPage(Page):  # TODO: Interface of help page
+class HelpPage(Page):
     name_ui_file = 'help_page.ui'
 
     def initUi(self):
