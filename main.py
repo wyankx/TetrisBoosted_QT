@@ -48,6 +48,7 @@ class MainWindow(window_interface.Window):  # Main window
             self.board = Board(self.db_cursor, self.widget(2))
         self.change_window.emit(2)
         self.currentWidget().layout().insertWidget(0, self.board)
+        self.currentWidget().back_button.setFocusPolicy(Qt.NoFocus)
         self.board.start_game()
 
 
@@ -61,6 +62,8 @@ class Board(QWidget):  # Game board
         WHERE TYPE == \'Using\'''').fetchone()
         self.setMinimumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
         self.setMaximumSize(self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
+        self.setFocusPolicy(Qt.StrongFocus)
+        self.main_window.back_button.setFocusPolicy(Qt.NoFocus)
 
         self.timer = QBasicTimer()
         self.drop_timer = QBasicTimer()
@@ -77,7 +80,6 @@ class Board(QWidget):  # Game board
         self.time = 0
         self.new_piece()
         self.main_window.keyPressEvent = self.keyPressEvent
-        self.main_window.back_button.setFocusPolicy(Qt.NoFocus)
         self.timer.start(self.SPEED, self)
         self.show()
 
@@ -252,7 +254,7 @@ class Board(QWidget):  # Game board
         return self.board[y][x]
 
 
-class ExtraBoard(Board):  # TODO: Game board for extra mode
+class ExtraBoard(Board):
     def __init__(self, db_cursor: sqlite3.Cursor, main_window):
         super().__init__(db_cursor, main_window)
         self.extra_timer = QBasicTimer()
