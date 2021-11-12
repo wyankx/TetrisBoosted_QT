@@ -244,7 +244,7 @@ class Board(QWidget):  # Game board
         self.is_started = False
         self.main_window.main_window.finish_game.emit(self.score)
         record_type = ('Default' if self.__class__ == Board else 'Extra')
-        self.main_window.db_cursor.execute(f'''INSERT INTO leader_board (record_type, score) VALUES
+        self.main_window.db_cursor.execute(f'''INSERT INTO leader_board (type, score) VALUES
         (\'{record_type}\', \'{self.score}\')''')
         self.main_window.main_window.db_connect.commit()
 
