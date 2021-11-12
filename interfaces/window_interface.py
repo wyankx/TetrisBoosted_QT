@@ -1,9 +1,16 @@
 import sqlite3
-from PyQt5 import uic
+
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, \
     QPushButton, QMessageBox
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtCore import Qt
+
+import interfaces.start_page
+import interfaces.select_mode_page
+import interfaces.game_page
+import interfaces.records_page
+import interfaces.settings_page
+import interfaces.help_page
 
 
 class Window(QStackedWidget):  # Interface of main window
@@ -21,7 +28,7 @@ class Window(QStackedWidget):  # Interface of main window
 class Page(QWidget):  # Default interface of pages
     def setup_ui(self, db_cursor, main_window):
         super().__init__()  # Customisation of page
-        uic.loadUi('interfaces/' + self.name_ui_file, self)
+        self.setupUi(self)
         self.main_window = main_window  # Main window object
         self.db_cursor = db_cursor  # Data base cursor
         self.back_button.clicked.connect(self.exit)
@@ -31,12 +38,10 @@ class Page(QWidget):  # Default interface of pages
         self.main_window.change_window.emit(0)
 
 
-class StartPage(Page):  # Inteface of start page
-    name_ui_file = 'start_page.ui'
-
+class StartPage(Page, interfaces.start_page.Ui_form):  # Inteface of start page
     def setup_ui(self, db_cursor: sqlite3.Cursor, main_window: Window):
         super().__init__()  # Customisation of main page
-        uic.loadUi('interfaces/' + self.name_ui_file, self)
+        self.setupUi(self)
         self.main_window = main_window
         self.db_cursor = db_cursor
         self.initUi()
@@ -49,9 +54,7 @@ class StartPage(Page):  # Inteface of start page
         self.exit_button.clicked.connect(lambda: self.main_window.exit.emit())
 
 
-class SelectModePage(Page):  # Interface of page for select mode
-    name_ui_file = 'select_mode_page.ui'
-
+class SelectModePage(Page, interfaces.select_mode_page.Ui_form):  # Interface of page for select mode
     def initUi(self):
         self.default_mode_button.clicked.connect(lambda: self.select_mode(False))
         self.extra_mode_button.clicked.connect(lambda: self.select_mode(True))
@@ -60,9 +63,7 @@ class SelectModePage(Page):  # Interface of page for select mode
         self.main_window.start_game(extra_mode)
 
 
-class GamePage(Page):  # Interface of game
-    name_ui_file = 'game_page.ui'
-
+class GamePage(Page, interfaces.game_page.Ui_game_layout):  # Interface of game
     def exit(self):
         self.layout().itemAt(0).widget().timer.stop()
         self.layout().itemAt(0).widget().is_started = False
@@ -79,9 +80,7 @@ class GamePage(Page):  # Interface of game
             'Your score: ' + str(score)))
 
 
-class RecordsPage(Page):  # Interface of records page
-    name_ui_file = 'records_page.ui'
-
+class RecordsPage(Page, interfaces.records_page.Ui_form):  # Interface of records page
     def initUi(self):
         self.records = self.db_cursor.execute('''SELECT * FROM leader_board
         ORDER BY score''').fetchall()[-1:-10:-1]
@@ -143,7 +142,7 @@ class RecordsPage(Page):  # Interface of records page
                     self.delete_items_of_layout(item.layout())
 
 
-class SettingsPage(Page):
+class SettingsPage(Page, interfaces.settings_page.Ui_form):
     name_ui_file = 'settings_page.ui'
 
     def initUi(self):
@@ -250,9 +249,7 @@ class SettingsPage(Page):
         self.board_settings_state_label.setText('')
 
 
-class HelpPage(Page):
-    name_ui_file = 'help_page.ui'
-
+class HelpPage(Page, interfaces.help_page.Ui_form):
     def initUi(self):
         self.set_text()
         self.main_window.change_window[int].connect(lambda num: self.set_text() if num == 5
