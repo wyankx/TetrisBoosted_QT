@@ -118,6 +118,7 @@ class Board(QWidget):  # Game board
         self.update_data()
         if not self.waiting_next_piece:
             self.new_piece()
+        self.update()
 
     def remove_full_lines(self):
         num_full_lines = 0
@@ -223,11 +224,6 @@ class Board(QWidget):  # Game board
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        color = QColor(200, 200, 200)
-        painter.setPen(Qt.NoPen)
-        painter.setBrush(color)
-        painter.drawRect(0, 0,
-                         self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
         for y in range(self.Y_HEIGHT):
             for x in range(self.X_WIDTH):
                 shape = self.shape_at(x, y)

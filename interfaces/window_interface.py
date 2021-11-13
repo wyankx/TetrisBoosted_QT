@@ -2,7 +2,7 @@ import sqlite3
 
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, \
     QPushButton, QMessageBox
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QKeySequence, QPainter, QColor
 from PyQt5.QtCore import Qt
 
 import interfaces.start_page
@@ -78,6 +78,16 @@ class GamePage(Page, interfaces.game_page.Ui_game_layout):  # Interface of game
     def initUi(self):
         self.main_window.finish_game[int].connect(lambda score: self.state_label.setText(
             'Your score: ' + str(score)))
+
+    def paintEvent(self, event):
+        board = self.layout().itemAt(0).widget()
+        if board.__class__.__name__ == 'Board':
+            painter = QPainter(self)
+            color = QColor(250, 250, 250)
+            painter.setPen(Qt.NoPen)
+            painter.setBrush(color)
+            painter.drawRect(board.x(), board.y(),
+                             board.PIXEL_SIZE * board.X_WIDTH, board.PIXEL_SIZE * board.Y_HEIGHT)
 
 
 class RecordsPage(Page, interfaces.records_page.Ui_form):  # Interface of records page
