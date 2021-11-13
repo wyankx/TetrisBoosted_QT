@@ -223,6 +223,11 @@ class Board(QWidget):  # Game board
 
     def paintEvent(self, event):
         painter = QPainter(self)
+        color = QColor(200, 200, 200)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(color)
+        painter.drawRect(0, 0,
+                         self.PIXEL_SIZE * self.X_WIDTH, self.PIXEL_SIZE * self.Y_HEIGHT)
         for y in range(self.Y_HEIGHT):
             for x in range(self.X_WIDTH):
                 shape = self.shape_at(x, y)
