@@ -136,7 +136,7 @@ class Board(QWidget):  # Game board
                     self.set_shape_at(x, y, self.shape_at(x, y - 1))
         num_full_lines = num_full_lines + len(rows_to_remove)
         if num_full_lines > 0:
-            self.score += num_full_lines * 100
+            self.score += num_full_lines ** 2 * 100
             self.update_data()
             self.waiting_next_piece = True
             self.current_piece.set_shape(Tetrominoe.no_shape)
