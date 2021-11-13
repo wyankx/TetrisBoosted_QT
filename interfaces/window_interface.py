@@ -83,7 +83,7 @@ class GamePage(Page, interfaces.game_page.Ui_game_layout):  # Interface of game
         board = self.layout().itemAt(0).widget()
         if board.__class__.__name__ == 'Board':
             painter = QPainter(self)
-            color = QColor(250, 250, 250)
+            color = QColor(210, 210, 250)
             painter.setPen(Qt.NoPen)
             painter.setBrush(color)
             painter.drawRect(board.x(), board.y(),
