@@ -41,6 +41,13 @@ class MainWindow(window_interface.Window):  # Main window
     def keyPressEvent(self, event):
         self.currentWidget().keyPressEvent(event)
 
+    def paintEvent(self, event):
+        color = QColor(50, 50, 210)
+        painter = QPainter(self)
+        painter.setBrush(color)
+        painter.setPen(Qt.NoPen)
+        painter.drawRect(0, 0, self.width(), self.height())
+
     def start_game(self, extra_mode):
         if extra_mode:
             self.board = ExtraBoard(self.db_cursor, self.widget(2))

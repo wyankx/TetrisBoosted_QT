@@ -24,7 +24,7 @@
    <item row="1" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="control">
       <property name="accessibleName">
@@ -563,6 +563,12 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="move_right_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Move Right</string>
          </property>
@@ -580,6 +586,12 @@
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="one_block_down_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>One block down</string>
          </property>
@@ -587,6 +599,12 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="move_left_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Move Left</string>
          </property>
@@ -604,6 +622,12 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="left_rotate_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Left Rotate</string>
          </property>
@@ -759,6 +783,12 @@
        </item>
        <item row="5" column="0">
         <widget class="QLabel" name="drop_piece_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Drop Piece</string>
          </property>
@@ -901,6 +931,12 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="right_rotate_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Right Rotate</string>
          </property>
@@ -928,6 +964,12 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="width_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Width</string>
          </property>
@@ -948,6 +990,12 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="height_label">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>Heidht</string>
          </property>

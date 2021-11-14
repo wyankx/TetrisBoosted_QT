@@ -21,6 +21,7 @@ class Ui_form(object):
         self.back_button.setObjectName("back_button")
         self.gridLayout.addWidget(self.back_button, 0, 0, 1, 1, QtCore.Qt.AlignLeft)
         self.scroll_area = QtWidgets.QScrollArea(form)
+        self.scroll_area.setStyleSheet("")
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setObjectName("scroll_area")
         self.records_widget = QtWidgets.QWidget()

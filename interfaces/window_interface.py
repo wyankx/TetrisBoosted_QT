@@ -2,7 +2,7 @@ import sqlite3
 
 from PyQt5.QtWidgets import QStackedWidget, QWidget, QButtonGroup, QHBoxLayout, QLabel, \
     QPushButton, QMessageBox
-from PyQt5.QtGui import QKeySequence, QPainter, QColor
+from PyQt5.QtGui import QKeySequence, QPainter, QColor, QPen, QFont
 from PyQt5.QtCore import Qt
 
 import interfaces.start_page
@@ -83,11 +83,16 @@ class GamePage(Page, interfaces.game_page.Ui_game_layout):  # Interface of game
         board = self.layout().itemAt(0).widget()
         if board.__class__.__name__ == 'Board':
             painter = QPainter(self)
-            color = QColor(210, 210, 250)
-            painter.setPen(Qt.NoPen)
-            painter.setBrush(color)
-            painter.drawRect(board.x(), board.y(),
-                             board.PIXEL_SIZE * board.X_WIDTH, board.PIXEL_SIZE * board.Y_HEIGHT)
+            pen = QPen(QColor(250, 250, 250))
+            pen.setWidth(10)
+            painter.setPen(pen)
+            painter.setBrush(QColor(210, 210, 250))
+            painter.drawRect(
+                board.x() - 5,
+                board.y() - 5,
+                board.PIXEL_SIZE * board.X_WIDTH + 10,
+                board.PIXEL_SIZE * board.Y_HEIGHT + 10
+            )
 
 
 class RecordsPage(Page, interfaces.records_page.Ui_form):  # Interface of records page
@@ -96,12 +101,17 @@ class RecordsPage(Page, interfaces.records_page.Ui_form):  # Interface of record
         ORDER BY score''').fetchall()[-1:-10:-1]
         self.widget_elements = []
         self.delete_records_button_group = QButtonGroup(self)
+        self.records_widget.paintEvent = self.paintEvent_for_records_widget
+        font = QFont()
+        font.setBold(True)
+        font.setWeight(75)
         for elem in self.records:
             self.widget_elements.append([elem[0]])  # id from db; Index = 0
             layout = QHBoxLayout()
             self.widget_elements[-1].append(layout)  # layout for interface; Index = 1
             self.records_widget.layout().addLayout(layout)
             label = QLabel(self)
+            label.setFont(font)
             label.setText(str(elem[1]) + ': ' + str(elem[2]))
             layout.addWidget(label)
             self.widget_elements[-1].append(label)  # label for interface; Index = 2
@@ -113,6 +123,12 @@ class RecordsPage(Page, interfaces.records_page.Ui_form):  # Interface of record
         self.delete_records_button_group.buttonClicked.connect(self.delete_record)
         self.main_window.change_window[int].connect(lambda num: self.update_data() if num == 3 else
                                                     None)
+
+    def paintEvent_for_records_widget(self, event):
+        painter = QPainter(self.records_widget)
+        painter.setBrush(QColor(48, 48, 203))
+        painter.setPen(Qt.NoPen)
+        painter.drawRect(0, 0, self.records_widget.width(), self.records_widget.height())
 
     def update_data(self):
         self.clear_widget()

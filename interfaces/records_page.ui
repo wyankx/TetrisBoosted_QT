@@ -23,6 +23,9 @@
    </item>
    <item row="1" column="0">
     <widget class="QScrollArea" name="scroll_area">
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
