@@ -81,7 +81,7 @@ class GamePage(Page, interfaces.game_page.Ui_game_layout):  # Interface of game
 
     def paintEvent(self, event):
         board = self.layout().itemAt(0).widget()
-        if board.__class__.__name__ == 'Board':
+        if board.__class__.__name__ in ('Board', 'ExtraBoard'):
             painter = QPainter(self)
             pen = QPen(QColor(250, 250, 250))
             pen.setWidth(10)
